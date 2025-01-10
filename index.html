@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+</head>
+<body>
+    <h1>Snake Game</h1>
+    <canvas id="gameCanvas" width="640" height="480"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const go = async () => {
+            const go = new Go();
+            const result = await WebAssembly.instantiateStreaming(fetch("game.wasm"), go.importObject);
+            go.run(result.instance);
+        };
+
+        go();
+    </script>
+</body>
+</html>
