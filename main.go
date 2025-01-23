@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image/color"
 	"log"
 	"math/rand"
@@ -19,7 +20,6 @@ var (
 	dirRight        = Point{x: -1, y: 0}
 	dirLeft         = Point{x: 1, y: 0}
 	mPlusFaceSource *text.GoTextFaceSource
-	score           = 0
 )
 
 const (
@@ -39,6 +39,7 @@ type Game struct {
 	lastUpdate time.Time
 	food       Point
 	gameOver   bool
+	score      int
 }
 
 func (g *Game) Update() error {
@@ -88,7 +89,7 @@ func (g *Game) UpdateSnake(snake *[]Point, direct Point) {
 			*snake...,
 		)
 		g.spawnFood()
-		score = score + 1
+		g.score = g.score + 1
 	}
 
 	*snake = append(
@@ -143,6 +144,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		text.Draw(screen, "Game Over!", face, op)
 	}
+	scoreStr := fmt.Sprintf("Score: %d", g.score)
+	face := &text.GoTextFace{
+		Source: mPlusFaceSource,
+		Size:   20,
+	} // Simple built-in font
+	// Text color
+	textX := 10
+	textY := 30
+
+	op := &text.DrawOptions{}
+
+	op.GeoM.Translate(
+		float64(textX),
+		float64(textY),
+	)
+	op.ColorScale.ScaleWithColor(color.Opaque)
+	// Draw the current score
+	text.Draw(screen, scoreStr, face, op)
 }
 
 func (g *Game) spawnFood() {
@@ -182,5 +201,10 @@ func main() {
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
+
+}
+
+// Reset The Game when click ESC
+func Reset() {
 
 }
